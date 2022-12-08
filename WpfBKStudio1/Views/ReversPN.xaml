@@ -20,10 +20,10 @@
             
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="1" FontSize="24" Text="Reverse Polish Notation" />
-        <TextBlock Grid.Row="2" FontSize="18" Text="Original Expretion:" />
-        <TextBox Grid.Row="3" HorizontalAlignment="Left" Text="{Binding OriginalExpretion, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBlock Grid.Row="4" FontSize="18" Text="Reverse Polish Expretion:" />
-        <TextBox Grid.Row="5" HorizontalAlignment="Left" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding ReversePolishExpretion}" />
+        <TextBlock Grid.Row="2" FontSize="18" Text="Original Expression:" />
+        <TextBox Grid.Row="3" HorizontalAlignment="Left" Text="{Binding OriginalExpression, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Grid.Row="4" FontSize="18" Text="Reverse Polish Expression:" />
+        <TextBox Grid.Row="5" HorizontalAlignment="Left" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding ReversePolishExpression}" />
         <TextBlock Grid.Row="6" FontSize="18" Text="Result:" />
         <TextBox Grid.Row="7" Width="200" HorizontalAlignment="Left" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding Result}" />
         <Button Grid.Row="8" Content="Calculate" Margin="0 20 0 0 " HorizontalAlignment="Left" Command="{Binding CalculateCommand}"/>

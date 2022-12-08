@@ -16,7 +16,7 @@ namespace WpfBKStudio1.Commands
 
         public override bool CanExecute(object parameter)
         {
-            return !string.IsNullOrEmpty(_reversePolishNotationViewModel.OriginalExpretion) &&
+            return !string.IsNullOrEmpty(_reversePolishNotationViewModel.OriginalExpression) &&
                    base.CanExecute(parameter);
         }
 
@@ -29,12 +29,13 @@ namespace WpfBKStudio1.Commands
 
         public override void Execute(object parameter)
         {
-            _reversePN.Calculate();
+            _reversePolishNotationViewModel.ReversePolishExpression = _reversePN.GetReversePolishNotation(_reversePolishNotationViewModel.OriginalExpression);
+            _reversePolishNotationViewModel.Result = _reversePN.Calculate();
         }
 
         private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ReversePolishNotationViewModel.OriginalExpretion))
+            if (e.PropertyName == nameof(ReversePolishNotationViewModel.OriginalExpression))
             {
                 OnCanExecutedChanged();
             }

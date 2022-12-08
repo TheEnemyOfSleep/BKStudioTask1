@@ -11,33 +11,33 @@ namespace WpfBKStudio1.ViewModels
 {
     public class ReversePolishNotationViewModel : ViewModelBase
     {
-        private string _originaExpretion;
-        private string _reversePolishExpretion;
+        private string _originaExpression;
+        private string _reversePolishExpression;
         private string _result;
 
-        public string OriginalExpretion
+        public string OriginalExpression
         {
             get
             {
-                return _originaExpretion;
+                return _originaExpression;
             }
             set
             {
-                _originaExpretion = value;
-                OnPropertyChanged(nameof(OriginalExpretion));
+                _originaExpression = value;
+                OnPropertyChanged(nameof(OriginalExpression));
             }
         }
         
-        public string ReversePolishExpretion
+        public string ReversePolishExpression
         {
             get
             {
-                return _reversePolishExpretion;
+                return _reversePolishExpression;
             }
             set
             {
-                _reversePolishExpretion = value;
-                OnPropertyChanged(nameof(ReversePolishExpretion));
+                _reversePolishExpression = value;
+                OnPropertyChanged(nameof(ReversePolishExpression));
             }
         }
 
@@ -58,8 +58,8 @@ namespace WpfBKStudio1.ViewModels
 
         public ReversePolishNotationViewModel(ReversePN reversePolishNotation)
         {
-            _originaExpretion = String.Empty;
-            _reversePolishExpretion = String.Empty;
+            _originaExpression = String.Empty;
+            _reversePolishExpression = String.Empty;
             _result = String.Empty;
 
             CalculateCommand = new CalculateCommand(reversePolishNotation, this);
