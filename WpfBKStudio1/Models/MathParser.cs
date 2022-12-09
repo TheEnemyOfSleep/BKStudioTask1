@@ -34,7 +34,7 @@ namespace WpfBKStudio1.Models
         }
         public static bool IsOperator(char token)
         {
-            if ("+-/*^".IndexOf(token) != -1)
+            if ("+-−/÷*×^".IndexOf(token) != -1)
             {
                 return true;
             }
@@ -57,8 +57,11 @@ namespace WpfBKStudio1.Models
             {
                 case "+": return 2;
                 case "-": return 2;
+                case "−": return 2;
                 case "*": return 4;
+                case "×": return 4;
                 case "/": return 4;
+                case "÷": return 4;
                 case "^": return 6;
                 case "-u": return 8;
                 default: return 10;

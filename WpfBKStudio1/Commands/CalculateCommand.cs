@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using WpfBKStudio1.Models;
 using WpfBKStudio1.ViewModels;
 
@@ -29,8 +30,20 @@ namespace WpfBKStudio1.Commands
 
         public override void Execute(object parameter)
         {
-            _reversePolishNotationViewModel.ReversePolishExpression = _reversePN.GetReversePolishNotation(_reversePolishNotationViewModel.OriginalExpression);
-            _reversePolishNotationViewModel.Result = _reversePN.Calculate();
+            try
+            {
+                _reversePolishNotationViewModel.ReversePolishExpression = _reversePN.GetReversePolishNotation(_reversePolishNotationViewModel.OriginalExpression);
+                _reversePolishNotationViewModel.Result = _reversePN.Calculate();
+            } catch (FormatException e)
+            {
+                MessageBox.Show(e.Message, "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            } catch (Exception)
+            {
+                MessageBox.Show("Unknown problem", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
         }
 
         private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)

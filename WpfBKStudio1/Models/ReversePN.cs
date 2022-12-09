@@ -15,22 +15,36 @@ namespace WpfBKStudio1.Models
         {
         }
 
+        private void ReversePolishNotationEnqueue(string token)
+        {
+            if (token != "-u")
+                _reversePolishNotation.Enqueue(token);
+            else
+            {
+                _reversePolishNotation.Enqueue("-1");
+                _reversePolishNotation.Enqueue("*");
+            }
+        }
+
         public string GetReversePolishNotation(string originalExpression)
         {
             Stack<string> operationStack = new Stack<string>();
             _reversePolishNotation = new Queue<string>();
             string lastOperator = "-u"; // By default we wait unar operation
+
+            // Shunting yard algorithm with unary support
             for (int i = 0; i < originalExpression.Length; i++)
             {
                 string token = originalExpression[i].ToString();
 
-                if (MathParser.IsDelimeter(token))
+                if (MathParser.IsDelimeter(token)) //If token is whitespace or =
                 {
                     continue;
                 } else if (Char.IsDigit(originalExpression[i]))
                 {
                     string digit = string.Empty;
 
+                    // Get all multi - digit numbers;
                     while (!MathParser.IsDelimeter(originalExpression[i]) && (!MathParser.IsOperator(originalExpression[i])) &&
                            originalExpression[i] != '(' && originalExpression[i] != ')')
                     {
@@ -40,27 +54,25 @@ namespace WpfBKStudio1.Models
                         if (i == originalExpression.Length) break;
                         lastOperator = String.Empty;
                     }
-                    _reversePolishNotation.Enqueue(digit.Replace('.', ','));
+                    //Put number into enqueue
+                    ReversePolishNotationEnqueue(digit.Replace('.', ','));
                     i--;
                 } else if (MathParser.IsOperator(token))
                 {
-                    if(!String.IsNullOrEmpty(lastOperator))
+                    //Add unary support
+                    if (!String.IsNullOrEmpty(lastOperator))
                     {
-                        token = "-u";
+                        if (token == "-")
+                            token = "-u";
+                        else
+                            throw new FormatException("Incorrect expression format:\n Operators are repeated.");
                     }
+                    //Base on priority and associative get operators
                     while (operationStack.Count > 0 && MathParser.IsOperator(operationStack.Peek()) &&
                           (MathParser.IsLeftAssociative(token) && MathParser.GetPriority(token) <= MathParser.GetPriority(operationStack.Peek()) ||
                           MathParser.IsRightAssociative(token) && MathParser.GetPriority(token) < MathParser.GetPriority(operationStack.Peek())))
                     {
-                        if (operationStack.Peek() != "-u")
-                        {
-                            _reversePolishNotation.Enqueue(operationStack.Pop());
-                        } else
-                        {
-                            operationStack.Pop();
-                            _reversePolishNotation.Enqueue("-1");
-                            _reversePolishNotation.Enqueue("*");
-                        }
+                        ReversePolishNotationEnqueue(operationStack.Pop());
                     }
                     operationStack.Push(token);
                     lastOperator = token;
@@ -70,12 +82,13 @@ namespace WpfBKStudio1.Models
                     lastOperator = String.Empty;
                 } else if (token == ")")
                 {
+                    //Remove the closed parenthesis from the operation stack
                     lastOperator = String.Empty;
                     while (operationStack.Count > 0 && operationStack.Peek() != "(")
                     {
-                        _reversePolishNotation.Enqueue(operationStack.Pop());
+                        ReversePolishNotationEnqueue(operationStack.Pop());
                         if (operationStack.Count == 0)
-                            throw new FormatException("Mismatched parentheses");
+                            throw new FormatException("Incorrect expression format:\n Mismatched parentheses");
                     }
                     operationStack.Pop();
 
@@ -84,7 +97,7 @@ namespace WpfBKStudio1.Models
                         string top = operationStack.Peek();
                         if (!MathParser.IsOperator(top) && top != ")" && top != "(")
                         {
-                            _reversePolishNotation.Enqueue(operationStack.Pop());
+                            ReversePolishNotationEnqueue(operationStack.Pop());
                         }
                     }
                 }
@@ -92,14 +105,9 @@ namespace WpfBKStudio1.Models
             while (operationStack.Count > 0)
             {
                 if (operationStack.Peek() == "(")
-                    throw new FormatException("Mismatched parentheses");
-                else if (operationStack.Peek() == "-u")
-                {
-                    operationStack.Pop();
-                    _reversePolishNotation.Enqueue("-1");
-                    _reversePolishNotation.Enqueue("*");
-                } else
-                    _reversePolishNotation.Enqueue(operationStack.Pop());
+                    throw new FormatException("Incorrect expression format:\n Mismatched parentheses");
+                else
+                    ReversePolishNotationEnqueue(operationStack.Pop());
             }
 
             _reverseExpression = String.Join(' ', _reversePolishNotation.ToArray());
@@ -109,13 +117,14 @@ namespace WpfBKStudio1.Models
         public string Calculate()
         {
             double result = 0;
-            string[] reversePolishNotation = _reversePolishNotation.ToArray();
+            List<string> reversePolishNotation = _reversePolishNotation.ToList();
+
 
             Stack<double> temp = new Stack<double>();
 
-            for (int i = 0; i < reversePolishNotation.Length; i++)
+            for (int i = 0; i < reversePolishNotation.Count; i++)
             {
-                if(!MathParser.IsOperator(reversePolishNotation[i]))
+                if (!MathParser.IsOperator(reversePolishNotation[i]))
                 {
                     temp.Push(double.Parse(reversePolishNotation[i]));
                 } else
@@ -126,9 +135,9 @@ namespace WpfBKStudio1.Models
                     switch(reversePolishNotation[i])
                     {
                         case "+": result = y + x; break;
-                        case "-": result = y - x; break;
-                        case "*": result = y * x; break;
-                        case "/": result = y / x; break;
+                        case "-": case "−": result = y - x; break;
+                        case "*": case "×": result = y * x; break;
+                        case "/": case "÷": result = y / x; break;
                         case "^": result = Math.Pow(y, x); break;
                     }
                     temp.Push(result);
